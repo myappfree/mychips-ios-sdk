@@ -34,12 +34,11 @@ class BalanceService {
             return
         }
         
-        let url = Constants.apiBaseURL
+        let url = URL(string: Constants.apiBaseURL.absoluteString + "/balance/" + userId)!
             .appendingQueryItems([
                 URLQueryItem(name: "adunit_id", value: adunitId)
             ])!
-        
-        
+                
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 onError(error)

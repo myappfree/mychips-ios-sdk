@@ -2,10 +2,10 @@
 import Foundation
 
 public class Reward {
-    let totalRevenue: Double
-    let virtualCurrencyReward: Double
+    public let totalRevenue: Double
+    public let virtualCurrencyReward: Double
     
-    init(totalRevenue: Double, virtualCurrencyReward: Double) {
+    public init(totalRevenue: Double, virtualCurrencyReward: Double) {
         self.totalRevenue = totalRevenue
         self.virtualCurrencyReward = virtualCurrencyReward
     }

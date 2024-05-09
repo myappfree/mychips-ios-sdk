@@ -32,33 +32,37 @@ public class MCWebViewController: UIViewController, WKUIDelegate, WKNavigationDe
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Adding top bar
-        let topBar = UIToolbar()
-        topBar.translatesAutoresizingMaskIntoConstraints = false
-        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        topBar.items = [backButton, flexibleSpace]
-        view.addSubview(topBar)
+        let navigationBar = UINavigationBar()
+        navigationBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(navigationBar)
 
-        // Add constraints for the top bar
+        // Create a navigation item with a back button
+        let navigationItem = UINavigationItem()
+        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButton
+
+        // Assign the navigation item to the navigation bar
+        navigationBar.items = [navigationItem]
+
+        // Add constraints for the navigation bar
         NSLayoutConstraint.activate([
-            topBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topBar.heightAnchor.constraint(equalToConstant: 44)
+            navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
         // Adding web view
         let webConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.allowsLinkPreview = true
         webView.uiDelegate = self
         webView.navigationDelegate = self
         view.addSubview(webView)
 
         // Add constraints for the web view
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: topBar.bottomAnchor),
+            webView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -78,7 +82,7 @@ public class MCWebViewController: UIViewController, WKUIDelegate, WKNavigationDe
     }
 
     @objc func backButtonTapped() {
-        if webView.canGoBack {
+        if webView.url?.absoluteString.contains("page=detail") == true {
             webView.goBack()
         } else {
             onClose?()
