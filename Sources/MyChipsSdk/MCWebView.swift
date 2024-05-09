@@ -31,7 +31,9 @@ public class MCWebViewController: UIViewController, WKUIDelegate, WKNavigationDe
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        
         let navigationBar = UINavigationBar()
         navigationBar.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(navigationBar)
