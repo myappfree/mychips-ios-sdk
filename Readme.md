@@ -29,7 +29,7 @@ If the `userId` is not set, it will be generated automatically and used until ma
 MCOfferwallSDK.shared.setUserId(userId: "YOUR_USER_ID")
 ```
 
-Obtain your API key and User ID from [Universal Developer Portal](https://docs.mychips.io/ios/install-sdk#:~:text=Universal%20Developer%20Portal).
+Obtain your API key and User ID from [Universal Developer Portal](https://dashboard.maf.ad/Account/Login).
 
 ## 4. Displaying the Offerwall
 
@@ -120,6 +120,8 @@ struct ContentView: View {
     }
 }
 ```
+
+Your Ad unit ID can be found [here](https://dashboard.maf.ad/Account/Login).
 
 ## 5. Reward User
 
