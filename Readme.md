@@ -35,23 +35,27 @@ Obtain your API key and User ID from [Universal Developer Portal](https://dashbo
 
 To display the offerwall, we provide you with a `UIViewController` which you can integrate into either UIKit or a SwiftUI project.
 
-### UIKit Example
-
 To show the offerwall, you need to provide your `AdUnitId` and a closure to close the offerwall:
+
+### UIKit Example
 
 ```swift
 import UIKit
 import MyChipsSdk
 
 class ViewController: UIViewController {
+    
+    let adunitId = "YOUR_AD_UNIT_ID"
+        
     override func viewDidLoad() {
         super.viewDidLoad()
+                
         let showOfferwallButton = UIButton(type: .system)
         showOfferwallButton.setTitle("Show Offerwall", for: .normal)
         showOfferwallButton.translatesAutoresizingMaskIntoConstraints = false
         showOfferwallButton.addTarget(self, action: #selector(showOfferwall), for: .touchUpInside)
         self.view.addSubview(showOfferwallButton)
-
+    
         NSLayoutConstraint.activate([
             showOfferwallButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             showOfferwallButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -59,7 +63,7 @@ class ViewController: UIViewController {
             showOfferwallButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
-
+    
     @objc func showOfferwall() {
         let webViewController = MCWebViewController(adunitId: adunitId)
         self.navigationController?.pushViewController(webViewController, animated: true)
@@ -76,13 +80,18 @@ struct WebViewWrapper: UIViewControllerRepresentable {
     let adunitId: String
     @Environment(\.presentationMode) var presentationMode
     
-    func makeUIViewController(context: Context) -> MCWebViewController {
-        return MCWebViewController(
-            adunitId: adunitId
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let webViewController = MCWebViewController(
+            adunitId: adunitId,
+            onClose: {
+                presentationMode.wrappedValue.dismiss()
+            }
         )
+        
+        return UINavigationController(rootViewController: webViewController)
     }
     
-    func updateUIViewController(_ uiViewController: MCWebViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
     }
 }
 ```
@@ -94,8 +103,7 @@ struct WebViewPage: View {
     var body: some View {
         WebViewWrapper(
             adunitId: "YOUR_AD_UNIT_ID"
-        )
-        .navigationBarBackButtonHidden(true)
+        ).navigationBarBackButtonHidden()
     }
 }
 ```
@@ -107,14 +115,9 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Button to navigate to the WebViewPage
-                NavigationLink(destination: WebViewPage(), label: {
+                NavigationLink(destination: WebViewPage()) {
                     Text("Open Offerwall")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(Color.white)
-                        .cornerRadius(10)
-                })
+                }
             }
         }
     }
@@ -130,6 +133,21 @@ Your Ad unit ID can be found [here](https://dashboard.maf.ad/Account/Login).
 > **Warning:** Use this method only if you have selected Self-Managed Currency. If you already support S2S postback, please skip this snippet.
 
 To check for a reward, use the `getReward` function. It requires your `adunitId`, a reward callback (which will be called if there is a reward), and an error callback.
+
+
+```swift
+MCOfferwallSDK.shared.getReward(adunitId: "YOUR_AD_UNIT_ID") { reward in
+        //do something with the reward, here we just print it
+        print(reward.virtualCurrencyReward)
+    } onError: { error in
+        //do something with the error, here we just print it
+        print(error)
+    }
+```
+
+> If there is no reward and no error, nothing will happen
+
+You should check for the reward whenever the app is started or resumed. Example integration:
 
 #### UIKit Example
 
@@ -169,33 +187,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 You can handle rewards in SwiftUI using the `scenePhase` environment value:
 
 ```swift
+import SwiftUI
+import MyChipsSdk
+
 @main
-struct MyChipsExampleApp: App {
+struct MyChipsSdkSwiftUIExampleApp: App {
     @Environment(\.scenePhase) var scenePhase
     @State private var firstActive = true
     
     var body: some Scene {
         WindowGroup {
-            ContentView().onChange(of: scenePhase) { newPhase in
-                
-                if newPhase == .active {
-                    if firstActive {
-                        // Initialize the SDK on app start
-                        MCOfferwallSDK.shared.configure(apiKey: "YOUR_API_KEY")
-                        // Optionally set user ID
-                        MCOfferwallSDK.shared.setUserId(userId: "YOUR_USER_ID")
-                        firstActive = false
-                    }
-                    
-                    // On start or resume, check the reward
-                    MCOfferwallSDK.shared.getReward(
-                        adunitId: "YOUR_AD_UNIT_ID") { reward in
-                            print(reward.virtualCurrencyReward)
-                        } onError: { error in
-                            print(error)
+            ContentView()
+                .onChange(of: scenePhase, perform: { phase in
+                    if phase == .active {
+                        if firstActive {
+                            // Initialize your SDK on the app start
+                            MCOfferwallSDK.shared.configure(apiKey: "YOUR_API_KEY")
+                            // Optionally set user id
+                            MCOfferwallSDK.shared.setUserId(userId: "YOUR_USER_ID")
+                            firstActive = false
                         }
-                }
-            }
+                        
+                        // On start or resume, check the reward
+                        MCOfferwallSDK.shared.getReward(
+                            adunitId: "YOUR_AD_UNIT_ID") { reward in
+                                print(reward.virtualCurrencyReward)
+                            } onError: { error in
+                                print(error)
+                            }
+                    }
+                })
         }
     }
 }
