@@ -13,11 +13,10 @@ let package = Package(
             targets: ["MyChipsSdk"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
         .binaryTarget(
             name: "MyChipsSdk",
-            url: "https://github.com/myappfree/mychips-ios-sdk/releases/download/v1.0.0/MyChipsSdk.xcframework.zip",
-            checksum: "d16224bed7c17d630e524c6d2a6d78196ad165380b64e420de6f922a0e1e9154"
+            url:"https://github.com/myappfree/mychips-ios-sdk/releases/download/v1.0.0/MyChipsSdk.xcframework.zip",
+            checksum: "d8faa564b6f5940ffd9f6c07415c6edb3ac578e86a3edb4bee2582fa0fa9956d"
         )
     ]
 )
