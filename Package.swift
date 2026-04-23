@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MyChipsSdk",
-            url:"https://github.com/myappfree/mychips-ios-sdk/releases/download/v1.0.5/MyChipsSdk.xcframework.zip",
-            checksum: "059f645f3d7cef5d42affc2942bf353b59fff54b9106cb7df117373a8593561f"
+            url:"https://github.com/myappfree/mychips-ios-sdk/releases/download/v1.1.0/MyChipsSdk.xcframework.zip",
+            checksum: "cc337940d1f3c0906a2ee4aeeea4f4d4cfda8d57e15f9b95e20d53c497a90ee9"
         )
     ]
 )
